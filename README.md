@@ -16,6 +16,7 @@ Aplicativo para gerar assinaturas no mesmo padrão visual do modelo fornecido. P
 - **Slogan editável:** cada quebra de linha vira uma linha no bloco central.
 - **Fonte:** apenas fontes seguras para e-mail (Arial, Verdana, Tahoma, Trebuchet, Georgia, Times, Courier, Segoe UI) — Gmail e Outlook ignoram fontes personalizadas.
 - **Negrito/Itálico:** aplicáveis individualmente a Nome, Cargo, Contatos e Slogan.
+- **Fundo decorativo:** padrão geométrico sutil (linhas de fluxo em degradê verde→teal) atrás do slogan e das logos, com fade para não atrapalhar os contatos. Pode ser ligado/desligado. No e-mail é aplicado via `background` na tabela (Gmail/Apple Mail exibem; Outlook desktop degrada para sem fundo, mantendo a legibilidade).
 
 ## Padrões de e-mail aplicados
 
@@ -25,9 +26,10 @@ Aplicativo para gerar assinaturas no mesmo padrão visual do modelo fornecido. P
 
 ## Imagens no e-mail (importante)
 
-- Gmail e Outlook **não exibem** imagens em base64 (`data:`) nem caminhos relativos. Hospede numa URL pública HTTPS os cinco arquivos abaixo e informe essa URL no campo **URL base das logos**. O HTML passa a referenciar as imagens de lá, com `width`, `height` e `alt`:
+- Gmail e Outlook **não exibem** imagens em base64 (`data:`) nem caminhos relativos. Hospede numa URL pública HTTPS os arquivos abaixo e informe essa URL no campo **URL base das logos**. O HTML passa a referenciar as imagens de lá, com `width`, `height` e `alt`:
   - `multsoft-wordmark.png`, `mb-tratos-wordmark.png` (logos)
   - `icon-phone.png`, `icon-mail.png`, `icon-location.png` (ícones de contato, estilo linha)
+  - `signature-bg.png` (padrão geométrico de fundo, transparente)
 - Sem a URL base, o HTML cai no base64 embutido (`assets/logos.js`) apenas como fallback de preview — não confiável em e-mails reais.
 - Para uma marca alternativa, prefira PNG transparente ou SVG já recortado no tamanho da área direita.
 
