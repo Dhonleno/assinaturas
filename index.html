@@ -81,7 +81,8 @@
     }
 
     input,
-    textarea {
+    textarea,
+    select {
       width: 100%;
       border: 1px solid #3a4351;
       border-radius: 8px;
@@ -93,9 +94,72 @@
       outline: none;
     }
 
+    select {
+      cursor: pointer;
+    }
+
     input[type="file"] {
       padding: 9px;
       color: var(--muted);
+    }
+
+    .style-grid {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 9px 12px;
+      align-items: center;
+    }
+
+    .style-grid .head {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .style-grid .rowlabel {
+      color: #dce3ec;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .chip {
+      cursor: pointer;
+    }
+
+    .chip input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .chip span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 32px;
+      border: 1px solid #3a4351;
+      border-radius: 7px;
+      background: #10141b;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .chip span.it {
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .chip input:checked + span {
+      background: var(--green);
+      border-color: var(--green);
+      color: #0b1309;
+    }
+
+    .chip input:focus-visible + span {
+      box-shadow: 0 0 0 3px rgba(8, 201, 237, 0.25);
     }
 
     .field-row {
@@ -244,6 +308,55 @@
         </label>
 
         <label>
+          Slogan
+          <textarea id="slogan" placeholder="Ex.: Gestão Pecuária&#10;Descomplicada&#10;da sua Fazenda"></textarea>
+        </label>
+        <p class="section-label" style="text-transform:none;font-weight:600;color:var(--muted);margin-top:-8px;">
+          Cada quebra de linha (Enter) vira uma linha no bloco central da assinatura.
+        </p>
+
+        <p class="section-label">Aparência dos textos</p>
+
+        <label>
+          Fonte
+          <select id="fontFamily">
+            <option value="Segoe UI, Arial, sans-serif">Segoe UI (padrão)</option>
+            <option value="Arial, Helvetica, sans-serif">Arial</option>
+            <option value="Verdana, Geneva, sans-serif">Verdana</option>
+            <option value="Tahoma, Geneva, sans-serif">Tahoma</option>
+            <option value="'Trebuchet MS', Helvetica, sans-serif">Trebuchet MS</option>
+            <option value="Georgia, 'Times New Roman', serif">Georgia (serifada)</option>
+            <option value="'Times New Roman', Times, serif">Times New Roman (serifada)</option>
+            <option value="'Courier New', Courier, monospace">Courier New (monoespaçada)</option>
+          </select>
+        </label>
+        <p class="section-label" style="text-transform:none;font-weight:600;color:var(--muted);margin-top:-8px;">
+          Apenas fontes seguras para e-mail — Gmail e Outlook ignoram fontes personalizadas.
+        </p>
+
+        <div class="style-grid">
+          <span></span>
+          <span class="head">Negrito</span>
+          <span class="head">Itálico</span>
+
+          <span class="rowlabel">Nome</span>
+          <label class="chip"><input type="checkbox" id="nameBold" checked><span>B</span></label>
+          <label class="chip"><input type="checkbox" id="nameItalic"><span class="it">I</span></label>
+
+          <span class="rowlabel">Cargo</span>
+          <label class="chip"><input type="checkbox" id="roleBold"><span>B</span></label>
+          <label class="chip"><input type="checkbox" id="roleItalic"><span class="it">I</span></label>
+
+          <span class="rowlabel">Contatos</span>
+          <label class="chip"><input type="checkbox" id="contactBold"><span>B</span></label>
+          <label class="chip"><input type="checkbox" id="contactItalic"><span class="it">I</span></label>
+
+          <span class="rowlabel">Slogan</span>
+          <label class="chip"><input type="checkbox" id="sloganBold" checked><span>B</span></label>
+          <label class="chip"><input type="checkbox" id="sloganItalic"><span class="it">I</span></label>
+        </div>
+
+        <label>
           URL base das logos (hospedagem pública)
           <input id="assetsBaseUrl" placeholder="https://seusite.com.br/assinaturas" autocomplete="off">
         </label>
@@ -334,11 +447,7 @@
                 <text id="svgAddress" x="63" y="160" font-size="10.8">Rua 89, 225 - St. Sul, Goiânia - GO, 74093-140</text>
               </g>
 
-              <g fill="#0a7c93" font-family="Segoe UI, Arial, sans-serif" font-size="13.5" font-weight="800">
-                <text x="353" y="64">Gestão Pecuária</text>
-                <text x="353" y="84">Descomplicada</text>
-                <text x="353" y="104">da sua Fazenda</text>
-              </g>
+              <g id="svgSlogan"></g>
 
               <g id="defaultBrandGroup">
                 <image id="defaultMultsoftImage" x="495" y="39" width="188" height="31" preserveAspectRatio="xMidYMid meet"></image>
@@ -366,6 +475,7 @@
       whatsapp: document.querySelector('#whatsapp'),
       email: document.querySelector('#email'),
       address: document.querySelector('#address'),
+      slogan: document.querySelector('#slogan'),
       assetsBaseUrl: document.querySelector('#assetsBaseUrl'),
       brandX: document.querySelector('#brandX'),
       brandY: document.querySelector('#brandY'),
@@ -379,6 +489,32 @@
       email: document.querySelector('#svgEmail'),
       address: document.querySelector('#svgAddress')
     };
+
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    const svgSlogan = document.querySelector('#svgSlogan');
+    const fontFamilySel = document.querySelector('#fontFamily');
+    const styleControls = {
+      name: { bold: document.querySelector('#nameBold'), italic: document.querySelector('#nameItalic') },
+      role: { bold: document.querySelector('#roleBold'), italic: document.querySelector('#roleItalic') },
+      contact: { bold: document.querySelector('#contactBold'), italic: document.querySelector('#contactItalic') },
+      slogan: { bold: document.querySelector('#sloganBold'), italic: document.querySelector('#sloganItalic') }
+    };
+
+    const readStyle = () => ({
+      fontFamily: fontFamilySel.value,
+      name: { bold: styleControls.name.bold.checked, italic: styleControls.name.italic.checked },
+      role: { bold: styleControls.role.bold.checked, italic: styleControls.role.italic.checked },
+      contact: { bold: styleControls.contact.bold.checked, italic: styleControls.contact.italic.checked },
+      slogan: { bold: styleControls.slogan.bold.checked, italic: styleControls.slogan.italic.checked }
+    });
+
+    const applySvgStyle = (node, fontFamily, cfg) => {
+      node.setAttribute('font-family', fontFamily);
+      node.setAttribute('font-weight', cfg.bold ? '700' : '400');
+      node.setAttribute('font-style', cfg.italic ? 'italic' : 'normal');
+    };
+
+    const cssTextStyle = (cfg) => `font-weight:${cfg.bold ? 700 : 400};font-style:${cfg.italic ? 'italic' : 'normal'};`;
 
     const status = document.querySelector('#status');
     const svg = document.querySelector('#signatureSvg');
@@ -429,6 +565,33 @@
       defaultBrandGroup.style.display = customBrandDataUrl ? 'none' : 'block';
     };
 
+    const renderSlogan = (style) => {
+      const raw = fields.slogan.value.trim();
+      const lines = (raw || 'Slogan da empresa')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .slice(0, 4);
+
+      while (svgSlogan.firstChild) svgSlogan.removeChild(svgSlogan.firstChild);
+
+      const centerY = 84;
+      const lineHeight = 20;
+      const startY = centerY - ((lines.length - 1) / 2) * lineHeight;
+
+      lines.forEach((line, index) => {
+        const node = document.createElementNS(SVGNS, 'text');
+        node.setAttribute('x', '353');
+        node.setAttribute('y', String(startY + index * lineHeight));
+        node.setAttribute('fill', '#0a7c93');
+        node.setAttribute('font-size', '13.5');
+        node.textContent = line;
+        applySvgStyle(node, style.fontFamily, style.slogan);
+        svgSlogan.appendChild(node);
+        fitText(node, 112, 13.5, 9);
+      });
+    };
+
     const syncPreview = () => {
       svgTargets.name.textContent = fields.name.value.trim() || 'Nome Sobrenome';
       svgTargets.role.textContent = fields.role.value.trim() || 'Cargo / setor';
@@ -436,11 +599,18 @@
       svgTargets.email.textContent = fields.email.value.trim() || 'email@empresa.com.br';
       svgTargets.address.textContent = fields.address.value.trim() || 'Endereço';
 
+      const style = readStyle();
+      applySvgStyle(svgTargets.name, style.fontFamily, style.name);
+      applySvgStyle(svgTargets.role, style.fontFamily, style.role);
+      [svgTargets.phone, svgTargets.email, svgTargets.address].forEach((node) => applySvgStyle(node, style.fontFamily, style.contact));
+
       fitText(svgTargets.name, 270, 20, 13);
       fitText(svgTargets.role, 270, 15, 10.5);
       fitText(svgTargets.phone, 238, 13.5, 9.5);
       fitText(svgTargets.email, 248, 13.5, 9);
       fitText(svgTargets.address, 248, 10.8, 7.6);
+
+      renderSlogan(style);
       syncBrandImage();
     };
 
@@ -513,6 +683,13 @@
       const pinIcon = resolveAssetUrl('icon-location.png');
       const iconStyle = 'width:16px;height:16px;vertical-align:middle;margin-right:9px;border:0;';
 
+      const style = readStyle();
+      const sloganHtml = (fields.slogan.value.trim() || '')
+        .split('\n')
+        .map((line) => escapeHtml(line.trim()))
+        .filter(Boolean)
+        .join('<br>');
+
       const brandHtml = customBrandDataUrl
         ? `<img src="${customBrandDataUrl}" width="176" alt="Marca" style="display:block;border:0;width:176px;max-width:176px;height:auto;margin:0 auto;">`
         : `
@@ -522,18 +699,18 @@
             `;
 
       return `
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:transparent;font-family:Segoe UI,Arial,sans-serif;border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:transparent;font-family:${style.fontFamily};border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0;">
           <tr>
             <td width="8" style="width:8px;border-left:5px solid #2f7d1f;font-size:0;line-height:0;">&nbsp;</td>
             <td width="247" style="width:247px;padding:22px 10px 18px 12px;vertical-align:top;">
-              <div style="font-size:18px;font-weight:800;line-height:22px;color:#1f6b12;">${escapeHtml(fields.name.value.trim())}</div>
-              <div style="font-size:13px;font-weight:600;line-height:18px;color:#0a7c93;margin-bottom:16px;">${escapeHtml(fields.role.value.trim())}</div>
-              <div style="font-size:12.5px;font-weight:600;line-height:24px;color:#333333;"><img src="${phoneIcon}" width="16" height="16" alt="" style="${iconStyle}"><a href="tel:${normalizePhoneDigits(phoneText)}" style="color:#333333;text-decoration:none;">${escapeHtml(phoneText)}</a></div>
-              <div style="font-size:12.5px;font-weight:600;line-height:24px;color:#333333;"><img src="${mailIcon}" width="16" height="16" alt="" style="${iconStyle}"><a href="mailto:${escapeHtml(email)}" style="color:#333333;text-decoration:none;">${escapeHtml(email)}</a></div>
-              <div style="font-size:11px;font-weight:600;line-height:18px;color:#333333;"><img src="${pinIcon}" width="16" height="16" alt="" style="${iconStyle}">${escapeHtml(address)}</div>
+              <div style="font-size:18px;${cssTextStyle(style.name)}line-height:22px;color:#1f6b12;">${escapeHtml(fields.name.value.trim())}</div>
+              <div style="font-size:13px;${cssTextStyle(style.role)}line-height:18px;color:#0a7c93;margin-bottom:16px;">${escapeHtml(fields.role.value.trim())}</div>
+              <div style="font-size:12.5px;${cssTextStyle(style.contact)}line-height:24px;color:#333333;"><img src="${phoneIcon}" width="16" height="16" alt="" style="${iconStyle}"><a href="tel:${normalizePhoneDigits(phoneText)}" style="color:#333333;text-decoration:none;">${escapeHtml(phoneText)}</a></div>
+              <div style="font-size:12.5px;${cssTextStyle(style.contact)}line-height:24px;color:#333333;"><img src="${mailIcon}" width="16" height="16" alt="" style="${iconStyle}"><a href="mailto:${escapeHtml(email)}" style="color:#333333;text-decoration:none;">${escapeHtml(email)}</a></div>
+              <div style="font-size:11px;${cssTextStyle(style.contact)}line-height:18px;color:#333333;"><img src="${pinIcon}" width="16" height="16" alt="" style="${iconStyle}">${escapeHtml(address)}</div>
             </td>
-            <td width="118" style="width:118px;border-left:1px solid #dfe3ea;border-right:1px solid #dfe3ea;padding:26px 8px 0 22px;vertical-align:top;color:#0a7c93;font-size:12.5px;font-weight:800;line-height:18px;">
-              Gestão Pecuária<br>Descomplicada<br>da sua Fazenda
+            <td width="118" style="width:118px;border-left:1px solid #dfe3ea;border-right:1px solid #dfe3ea;padding:26px 8px 0 22px;vertical-align:top;color:#0a7c93;font-size:12.5px;${cssTextStyle(style.slogan)}line-height:18px;">
+              ${sloganHtml}
             </td>
             <td width="215" style="width:215px;padding:24px 18px 0 18px;vertical-align:top;text-align:center;">
               ${brandHtml}
@@ -584,6 +761,12 @@
 
     Object.values(fields).forEach((field) => {
       field.addEventListener('input', syncPreview);
+    });
+
+    fontFamilySel.addEventListener('change', syncPreview);
+    Object.values(styleControls).forEach((group) => {
+      group.bold.addEventListener('change', syncPreview);
+      group.italic.addEventListener('change', syncPreview);
     });
 
     brandImageInput.addEventListener('change', () => {

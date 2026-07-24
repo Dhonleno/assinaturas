@@ -1,16 +1,21 @@
 # Gerador de Assinaturas Multsoft
 
-Aplicativo local para gerar assinaturas no mesmo padrão visual do modelo fornecido.
+Aplicativo para gerar assinaturas no mesmo padrão visual do modelo fornecido. Publicado em **https://dhonleno.github.io/assinaturas/**.
 
 ## Como usar
 
-1. Abra `index.html` no navegador.
-2. Preencha nome, cargo, telefone, e-mail e endereço.
-3. As logos padrão já estão configuradas como `Multsoft` e `MB Tratos`.
-4. Se a marca final for diferente, envie a imagem em `Marca alternativa`.
-5. Ajuste `X`, `Y` e `Largura` para encaixar a imagem alternativa no lado direito.
-6. Use `Baixar PNG` para salvar a assinatura como imagem.
-7. Use `Copiar HTML` para colar a assinatura em um editor de e-mail.
+1. Acesse o gerador pelo link publicado (não abra o arquivo local, para as imagens do e-mail funcionarem).
+2. Preencha nome, cargo, telefone, e-mail, endereço e **slogan**.
+3. Em **Aparência dos textos**, escolha a **fonte** e ligue **negrito/itálico** por elemento (Nome, Cargo, Contatos, Slogan).
+4. As logos padrão já estão configuradas como `Multsoft` e `MB Tratos`.
+5. Se a marca final for diferente, envie a imagem em `Marca alternativa` e ajuste `X`, `Y` e `Largura`.
+6. Use `Copiar HTML` para colar a assinatura no editor de e-mail, ou `Baixar PNG` para a imagem.
+
+## Personalização de textos
+
+- **Slogan editável:** cada quebra de linha vira uma linha no bloco central.
+- **Fonte:** apenas fontes seguras para e-mail (Arial, Verdana, Tahoma, Trebuchet, Georgia, Times, Courier, Segoe UI) — Gmail e Outlook ignoram fontes personalizadas.
+- **Negrito/Itálico:** aplicáveis individualmente a Nome, Cargo, Contatos e Slogan.
 
 ## Padrões de e-mail aplicados
 
