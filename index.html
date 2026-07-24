@@ -32,44 +32,163 @@
       color: var(--text);
     }
 
-    main {
-      display: grid;
-      grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
-      min-height: 100vh;
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    .sidebar {
-      padding: 24px;
-      border-right: 1px solid var(--line);
-      background: var(--panel);
-      overflow: auto;
-    }
-
-    .workspace {
+    .topbar {
+      flex: none;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 32px;
-      overflow: auto;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 20px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
     }
 
-    h1 {
-      margin: 0 0 6px;
-      font-size: 24px;
-      line-height: 1.15;
-      letter-spacing: 0;
+    .topbar h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.1;
     }
 
-    .intro {
-      margin: 0 0 24px;
+    .topbar .sub {
+      display: block;
+      margin-top: 2px;
       color: var(--muted);
-      line-height: 1.45;
-      font-size: 14px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .topbar-actions button {
+      min-height: 40px;
+      padding: 0 16px;
+      white-space: nowrap;
+    }
+
+    .body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(680px, 760px) minmax(0, 1fr);
+      min-height: 0;
+    }
+
+    .dock {
+      overflow: auto;
+      padding: 16px;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
     }
 
     form {
       display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    form > .panel:nth-child(1) {
+      grid-column: 1;
+    }
+
+    form > .panel:nth-child(2) {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+
+    form > .panel:nth-child(3) {
+      grid-column: 1;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel-2);
+      padding: 13px;
+      display: grid;
+      gap: 11px;
+      align-content: start;
+    }
+
+    .panel > h2 {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--muted);
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .grid2 .span2 {
+      grid-column: 1 / -1;
+    }
+
+    .hint {
+      margin: -4px 0 0;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .dock label {
+      gap: 5px;
+      font-size: 12px;
+    }
+
+    .dock input,
+    .dock textarea,
+    .dock select {
+      font-size: 13.5px;
+      padding: 8px 10px;
+    }
+
+    .dock textarea {
+      min-height: 52px;
+    }
+
+    .canvas {
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: #0d1016;
+    }
+
+    .canvas-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       gap: 16px;
+    }
+
+    .artboard {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 756px;
     }
 
     label {
@@ -247,23 +366,11 @@
       font-size: 13px;
     }
 
-    .signature-shell {
-      width: min(100%, 980px);
-    }
-
-    .signature-frame {
-      width: 100%;
-      overflow: auto;
-      padding: 16px;
-      border: 1px solid var(--line);
-      background: #ffffff;
-    }
-
     #signatureSvg {
       display: block;
-      width: 720px;
-      height: 180px;
-      max-width: none;
+      width: 100%;
+      height: auto;
+      max-width: 720px;
     }
 
     .copy-buffer {
@@ -274,72 +381,82 @@
       pointer-events: none;
     }
 
-    @media (max-width: 900px) {
-      main {
+    @media (max-width: 1080px) {
+      .body {
         grid-template-columns: 1fr;
+        overflow: auto;
       }
 
-      .sidebar {
+      .dock {
         border-right: 0;
         border-bottom: 1px solid var(--line);
       }
+    }
 
-      .workspace {
-        justify-content: flex-start;
-        padding: 18px;
+    @media (max-width: 720px) {
+      form {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-  <main>
-    <aside class="sidebar">
-      <h1>Gerador de Assinaturas</h1>
-      <p class="intro">Edite os dados, confira o preview e exporte a assinatura no padrão visual da Multsoft.</p>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Gerador de Assinaturas</h1>
+        <span class="sub">Padrão visual Multsoft</span>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" id="downloadPng">Baixar PNG</button>
+        <button type="button" id="copyHtml" class="secondary">Copiar HTML</button>
+        <button type="button" id="resetBrand" class="secondary">Usar logo padrão</button>
+      </div>
+    </header>
 
-      <form id="signatureForm">
-        <label>
-          Nome
-          <input id="name" value="" placeholder="Ex.: Nome Sobrenome" autocomplete="name">
-        </label>
+    <div class="body">
+      <aside class="dock">
+        <form id="signatureForm">
+          <section class="panel">
+            <h2>Dados</h2>
+            <div class="grid2">
+              <label>
+                Nome
+                <input id="name" value="" placeholder="Ex.: Nome Sobrenome" autocomplete="name">
+              </label>
+              <label>
+                Cargo / setor
+                <input id="role" value="" placeholder="Ex.: Administrativo / Financeiro">
+              </label>
+              <label>
+                Telefone
+                <input id="phone" value="" placeholder="Ex.: +55 61 3686-2600">
+              </label>
+              <label>
+                WhatsApp
+                <input id="whatsapp" value="" placeholder="Ex.: +55 61 99999-9999">
+              </label>
+              <label class="span2">
+                E-mail
+                <input id="email" value="" placeholder="Ex.: nome@empresa.com.br" autocomplete="email">
+              </label>
+              <label class="span2">
+                Endereço
+                <textarea id="address" placeholder="Ex.: Rua, número - Bairro, Cidade - UF, CEP"></textarea>
+              </label>
+            </div>
+          </section>
 
-        <label>
-          Cargo / setor
-          <input id="role" value="" placeholder="Ex.: Administrativo / Financeiro">
-        </label>
+          <section class="panel">
+            <h2>Slogan &amp; aparência</h2>
+            <label>
+              Slogan
+              <textarea id="slogan" placeholder="Ex.: Gestão Pecuária&#10;Descomplicada&#10;da sua Fazenda"></textarea>
+            </label>
+            <p class="hint">Cada quebra de linha (Enter) vira uma linha no bloco central.</p>
 
-        <label>
-          Telefone
-          <input id="phone" value="" placeholder="Ex.: +55 61 3686-2600">
-        </label>
-
-        <label>
-          WhatsApp
-          <input id="whatsapp" value="" placeholder="Ex.: +55 61 99999-9999">
-        </label>
-
-        <label>
-          E-mail
-          <input id="email" value="" placeholder="Ex.: nome@empresa.com.br" autocomplete="email">
-        </label>
-
-        <label>
-          Endereço
-          <textarea id="address" placeholder="Ex.: Rua, número - Bairro, Cidade - UF, CEP"></textarea>
-        </label>
-
-        <label>
-          Slogan
-          <textarea id="slogan" placeholder="Ex.: Gestão Pecuária&#10;Descomplicada&#10;da sua Fazenda"></textarea>
-        </label>
-        <p class="section-label" style="text-transform:none;font-weight:600;color:var(--muted);margin-top:-8px;">
-          Cada quebra de linha (Enter) vira uma linha no bloco central da assinatura.
-        </p>
-
-        <p class="section-label">Aparência dos textos</p>
-
-        <label>
-          Fonte
+            <label>
+              Fonte
           <select id="fontFamily">
             <option value="Segoe UI, Arial, sans-serif">Segoe UI (padrão)</option>
             <option value="Arial, Helvetica, sans-serif">Arial</option>
@@ -351,9 +468,7 @@
             <option value="'Courier New', Courier, monospace">Courier New (monoespaçada)</option>
           </select>
         </label>
-        <p class="section-label" style="text-transform:none;font-weight:600;color:var(--muted);margin-top:-8px;">
-          Apenas fontes seguras para e-mail — Gmail e Outlook ignoram fontes personalizadas.
-        </p>
+        <p class="hint">Apenas fontes seguras para e-mail — Gmail e Outlook ignoram fontes personalizadas.</p>
 
         <div class="style-grid">
           <span></span>
@@ -377,54 +492,46 @@
           <label class="chip"><input type="checkbox" id="sloganItalic"><span class="it">I</span></label>
         </div>
 
-        <label class="toggle-row">
-          <input type="checkbox" id="bgToggle" checked>
-          Fundo decorativo (padrão geométrico)
-        </label>
+            <label class="toggle-row">
+              <input type="checkbox" id="bgToggle" checked>
+              Fundo decorativo (padrão geométrico)
+            </label>
+          </section>
 
-        <label>
-          URL base das logos (hospedagem pública)
-          <input id="assetsBaseUrl" placeholder="https://seusite.com.br/assinaturas" autocomplete="off">
-        </label>
-        <p class="section-label" style="text-transform:none;font-weight:600;color:var(--muted);margin-top:-8px;">
-          Deixe em branco se o gerador estiver publicado na internet — as imagens são detectadas automaticamente. Preencha apenas se hospedar as imagens em outro endereço.
-        </p>
+          <section class="panel">
+            <h2>Marca &amp; imagens</h2>
+            <label>
+              URL base das logos (hospedagem pública)
+              <input id="assetsBaseUrl" placeholder="https://seusite.com.br/assinaturas" autocomplete="off">
+            </label>
+            <p class="hint">Deixe em branco se o gerador estiver publicado na internet — as imagens são detectadas automaticamente.</p>
 
-        <p class="section-label">Marca alternativa</p>
+            <label>
+              Marca alternativa (imagem)
+              <input id="brandImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+            </label>
 
-        <label>
-          Imagem
-          <input id="brandImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
-        </label>
+            <div class="field-row">
+              <label>
+                X
+                <input id="brandX" type="number" value="482" min="430" max="690" step="1">
+              </label>
+              <label>
+                Y
+                <input id="brandY" type="number" value="37" min="0" max="150" step="1">
+              </label>
+              <label>
+                Largura
+                <input id="brandWidth" type="number" value="210" min="80" max="270" step="1">
+              </label>
+            </div>
+          </section>
+        </form>
+      </aside>
 
-        <div class="field-row">
-          <label>
-            X
-            <input id="brandX" type="number" value="482" min="430" max="690" step="1">
-          </label>
-          <label>
-            Y
-            <input id="brandY" type="number" value="37" min="0" max="150" step="1">
-          </label>
-          <label>
-            Largura
-            <input id="brandWidth" type="number" value="210" min="80" max="270" step="1">
-          </label>
-        </div>
-
-        <div class="actions">
-          <button type="button" id="downloadPng">Baixar PNG transparente</button>
-          <button type="button" id="copyHtml" class="secondary">Copiar HTML</button>
-          <button type="button" id="resetBrand" class="secondary full">Usar logo padrão</button>
-        </div>
-
-        <p id="status" class="status" aria-live="polite"></p>
-      </form>
-    </aside>
-
-    <section class="workspace" aria-label="Preview da assinatura">
-      <div class="signature-shell">
-        <div class="signature-frame">
+      <main class="canvas" aria-label="Preview da assinatura">
+        <div class="canvas-inner">
+          <div class="artboard">
           <svg id="signatureSvg" viewBox="0 0 720 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Assinatura Multsoft">
             <defs>
               <clipPath id="signatureClip">
@@ -524,10 +631,12 @@
               <image id="customBrandImage" x="482" y="37" width="210" height="112" preserveAspectRatio="xMidYMid meet" style="display:none"></image>
             </g>
           </svg>
+          </div>
+          <p id="status" class="status" aria-live="polite"></p>
         </div>
-      </div>
-    </section>
-  </main>
+      </main>
+    </div>
+  </div>
 
   <div id="copyBuffer" class="copy-buffer" aria-hidden="true"></div>
 
