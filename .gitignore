@@ -1,0 +1,14 @@
+# Artefatos de desenvolvimento (screenshots das iterações de design)
+/preview*.png
+/signature-*-preview.png
+
+# Fontes/intermediários que o app não usa em produção
+/assets/multsoft.png
+/assets/mb-tratos.png
+/assets/*-cropped.png
+/assets/*-signature.png
+/assets/*.b64
+
+# Sistema
+Thumbs.db
+.DS_Store
